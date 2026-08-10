@@ -1,0 +1,34 @@
+* text=auto eol=lf
+
+# Unity text assets (kept as text so diffs and merges are readable)
+*.cs      text diff=csharp
+*.shader  text
+*.cginc   text
+*.hlsl    text
+*.asmdef  text
+*.json    text
+*.md      text
+*.unity   text
+*.prefab  text
+*.asset   text
+*.mat     text
+*.meta    text
+*.anim    text
+*.controller text
+
+# Binary assets
+*.png  -text
+*.jpg  -text
+*.jpeg -text
+*.psd  -text
+*.tga  -text
+*.gif  -text
+*.wav  -text
+*.mp3  -text
+*.ogg  -text
+*.fbx  -text
+*.ttf  -text
+*.otf  -text
+*.dll  -text
+*.so   -text
+*.unitypackage -text
