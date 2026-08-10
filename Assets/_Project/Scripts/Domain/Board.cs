@@ -11,6 +11,33 @@ namespace MergeMechanic.Domain
         public int Width { get; }
         public int Height { get; }
 
+        public IEnumerable<BoardObject> Objects
+        {
+            get
+            {
+                for (int x = 0; x < Width; x++)
+                for (int y = 0; y < Height; y++)
+                {
+                    BoardObject current = _cells[x, y];
+                    if (current != null)
+                        yield return current;
+                }
+            }
+        }
+
+        public bool HasFreeCell
+        {
+            get
+            {
+                for (int x = 0; x < Width; x++)
+                for (int y = 0; y < Height; y++)
+                    if (_cells[x, y] == null)
+                        return true;
+
+                return false;
+            }
+        }
+
         public Board(int width, int height)
         {
             Width = width;
@@ -38,33 +65,6 @@ namespace MergeMechanic.Domain
             BoardObject moved = _cells[from.x, from.y];
             _cells[from.x, from.y] = null;
             Place(moved, to);
-        }
-
-        public IEnumerable<BoardObject> Objects
-        {
-            get
-            {
-                for (int x = 0; x < Width; x++)
-                for (int y = 0; y < Height; y++)
-                {
-                    BoardObject current = _cells[x, y];
-                    if (current != null)
-                        yield return current;
-                }
-            }
-        }
-
-        public bool HasFreeCell
-        {
-            get
-            {
-                for (int x = 0; x < Width; x++)
-                for (int y = 0; y < Height; y++)
-                    if (_cells[x, y] == null)
-                        return true;
-
-                return false;
-            }
         }
 
         public bool TryGetRandomFreeCell(IRandomProvider random, out Vector2Int cell)

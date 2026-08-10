@@ -15,6 +15,11 @@ namespace MergeMechanic.Services
 
         private int _nextId = 1;
 
+        public int Width => _board.Width;
+        public int Height => _board.Height;
+        public IEnumerable<BoardObject> Objects => _board.Objects;
+        public bool HasFreeCell => _board.HasFreeCell;
+
         public GameBoardService(GameConfig config, IRandomProvider random, SignalBus signalBus)
         {
             _random = random;
@@ -25,11 +30,6 @@ namespace MergeMechanic.Services
 
             ApplyStartingLayout(boardConfig);
         }
-
-        public int Width => _board.Width;
-        public int Height => _board.Height;
-        public IEnumerable<BoardObject> Objects => _board.Objects;
-        public bool HasFreeCell => _board.HasFreeCell;
 
         public BoardObject GetAt(Vector2Int cell) => _board.Get(cell);
 

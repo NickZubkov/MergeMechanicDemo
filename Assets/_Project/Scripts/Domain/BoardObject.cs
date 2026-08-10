@@ -10,6 +10,9 @@ namespace MergeMechanic.Domain
         public MergeChainConfig Chain { get; }
         public int Level { get; private set; }
         public Vector2Int Position { get; private set; }
+        public ChainLevel LevelData => Chain.GetLevel(Level);
+        public bool CanSpawn => !LevelData.SpawnTable.IsEmpty;
+        public bool IsMaxLevel => Level >= Chain.MaxLevel;
 
         public BoardObject(int id, MergeChainConfig chain, int level)
         {
@@ -23,10 +26,6 @@ namespace MergeMechanic.Domain
             Chain = chain;
             Level = level;
         }
-
-        public ChainLevel LevelData => Chain.GetLevel(Level);
-        public bool CanSpawn => !LevelData.SpawnTable.IsEmpty;
-        public bool IsMaxLevel => Level >= Chain.MaxLevel;
 
         public void Upgrade()
         {

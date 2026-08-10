@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using MergeMechanic.Domain;
 using MergeMechanic.Services;
 using MergeMechanic.Signals;
-using UnityEngine;
 using Zenject;
 
 namespace MergeMechanic.Presentation

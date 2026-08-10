@@ -7,18 +7,6 @@ namespace MergeMechanic.Configs
     [CreateAssetMenu(menuName = "MergeMechanic/Board", fileName = "BoardConfig")]
     public class BoardConfig : ScriptableObject
     {
-        [Serializable]
-        public class StartingObject
-        {
-            [SerializeField] private MergeChainConfig _chain;
-            [SerializeField, Min(1)] private int _level = 1;
-            [SerializeField] private Vector2Int _position;
-
-            public MergeChainConfig Chain => _chain;
-            public int Level => _level;
-            public Vector2Int Position => _position;
-        }
-
         [SerializeField, Min(1)] private int _width = 7;
         [SerializeField, Min(1)] private int _height = 9;
         [SerializeField] private List<StartingObject> _startingLayout = new List<StartingObject>();
@@ -47,6 +35,18 @@ namespace MergeMechanic.Configs
                         $"[{name}] стартовый объект в {p}: цепочка '{entry.Chain.name}' не имеет уровня {entry.Level}.",
                         this);
             }
+        }
+
+        [Serializable]
+        public class StartingObject
+        {
+            [SerializeField] private MergeChainConfig _chain;
+            [SerializeField, Min(1)] private int _level = 1;
+            [SerializeField] private Vector2Int _position;
+
+            public MergeChainConfig Chain => _chain;
+            public int Level => _level;
+            public Vector2Int Position => _position;
         }
     }
 }

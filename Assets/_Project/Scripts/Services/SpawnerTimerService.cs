@@ -12,15 +12,15 @@ namespace MergeMechanic.Services
         private readonly IGameBoard _board;
         private readonly CancellationTokenSource _lifetime = new CancellationTokenSource();
 
+        public TimerState State { get; private set; } = TimerState.Idle;
+        public float Remaining { get; private set; }
+        public bool CanStart => State == TimerState.Idle;
+
         public SpawnerTimerService(GameConfig config, IGameBoard board)
         {
             _config = config.Timer;
             _board = board;
         }
-
-        public TimerState State { get; private set; } = TimerState.Idle;
-        public float Remaining { get; private set; }
-        public bool CanStart => State == TimerState.Idle;
 
         public void StartCountdown()
         {
