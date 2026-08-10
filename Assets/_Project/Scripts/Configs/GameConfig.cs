@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace MergeMechanic.Configs
 {
-    /// <summary>Корневой конфиг. Единственная ссылка на данные, которую держит инсталлер.</summary>
     [CreateAssetMenu(menuName = "MergeMechanic/Game", fileName = "GameConfig")]
     public class GameConfig : ScriptableObject
     {

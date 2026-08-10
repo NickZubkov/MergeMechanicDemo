@@ -6,7 +6,6 @@ using Zenject;
 
 namespace MergeMechanic.Presentation
 {
-    /// <summary>Переводит ввод в намерение «свести клетку A с клеткой B». Правил не знает.</summary>
     public class DragInputController : ITickable
     {
         private readonly IGameBoard _board;
@@ -73,7 +72,6 @@ namespace MergeMechanic.Presentation
                     settled = toCell;
             }
 
-            // При Merged вьюху уже уничтожил презентер — трогать её нельзя.
             if (result != InteractionResult.Merged)
                 view.transform.position = _layout.CellToWorld(settled);
         }

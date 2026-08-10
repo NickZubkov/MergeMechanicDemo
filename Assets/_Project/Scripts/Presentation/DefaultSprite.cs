@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace MergeMechanic.Presentation
 {
-    /// <summary>Белый квадрат размером в один юнит — чтобы не заводить арт-ассеты ради заглушки.</summary>
     public static class DefaultSprite
     {
         private static Sprite _square;

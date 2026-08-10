@@ -7,7 +7,6 @@ using Zenject;
 
 namespace MergeMechanic.Services
 {
-    /// <summary>Единственное место, где меняется состояние поля.</summary>
     public class GameBoardService : IGameBoard
     {
         private readonly IRandomProvider _random;

@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace MergeMechanic.Domain
 {
-    /// <summary>Выбор записи таблицы спавна пропорционально весам.</summary>
     public static class WeightedPicker
     {
         public static SpawnEntry Pick(IReadOnlyList<SpawnEntry> entries, IRandomProvider random)

@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace MergeMechanic.Domain
 {
-    /// <summary>Объект на поле: предмет или спавнер — разница только в наличии таблицы спавна.</summary>
     public class BoardObject
     {
         public int Id { get; }

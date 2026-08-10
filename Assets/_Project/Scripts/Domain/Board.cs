@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace MergeMechanic.Domain
 {
-    /// <summary>Сетка объектов. Только хранение — правил здесь нет.</summary>
     public class Board
     {
         private readonly BoardObject[,] _cells;

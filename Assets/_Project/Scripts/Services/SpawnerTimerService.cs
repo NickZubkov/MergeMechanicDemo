@@ -6,7 +6,6 @@ using UnityEngine;
 
 namespace MergeMechanic.Services
 {
-    /// <summary>Обратный отсчёт по кнопке, выдающий спавнер. Ждёт свободной клетки, а не сгорает.</summary>
     public class SpawnerTimerService : ISpawnerTimer, IDisposable
     {
         private readonly SpawnerTimerConfig _config;

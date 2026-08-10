@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace MergeMechanic.Configs
 {
-    /// <summary>Одна строка таблицы спавна: что и с каким весом может выпасть.</summary>
     [Serializable]
     public class SpawnEntry
     {

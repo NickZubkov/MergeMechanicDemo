@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace MergeMechanic.Configs
 {
-    /// <summary>Взвешенная таблица спавна. Пустая таблица означает, что объект не спавнер.</summary>
     [Serializable]
     public class SpawnTable
     {

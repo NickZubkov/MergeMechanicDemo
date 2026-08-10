@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace MergeMechanic.Presentation
 {
-    /// <summary>Раскладка поля в мире. Прячет камеру от остальных слоёв.</summary>
     public interface IBoardLayout
     {
         void Build(int width, int height);

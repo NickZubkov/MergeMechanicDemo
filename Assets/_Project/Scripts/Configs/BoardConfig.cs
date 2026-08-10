@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace MergeMechanic.Configs
 {
-    /// <summary>Размер поля и стартовая раскладка объектов.</summary>
     [CreateAssetMenu(menuName = "MergeMechanic/Board", fileName = "BoardConfig")]
     public class BoardConfig : ScriptableObject
     {

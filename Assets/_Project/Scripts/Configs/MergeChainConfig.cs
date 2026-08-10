@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace MergeMechanic.Configs
 {
-    /// <summary>Цепочка мерджа: упорядоченный список уровней, индекс 0 соответствует уровню 1.</summary>
     [CreateAssetMenu(menuName = "MergeMechanic/Merge Chain", fileName = "MergeChain")]
     public class MergeChainConfig : ScriptableObject
     {

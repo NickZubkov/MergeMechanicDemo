@@ -19,15 +19,12 @@ namespace MergeMechanic.Installers
         {
             SignalBusInstaller.Install(Container);
 
-            // GameConfig — ScriptableObject-данные без поведения: интерфейсов нет, подменять нечего.
             Container.BindInstance(_config);
 
             Container.BindInterfacesTo<BoardView>().FromInstance(_boardView).AsSingle();
             Container.BindInterfacesTo<UnityRandomProvider>().AsSingle();
             Container.BindInterfacesTo<GameBoardService>().AsSingle();
 
-            // NonLazy: единственные интерфейсы таймера — ISpawnerTimer и IDisposable,
-            // иначе он бы создался только при первом обращении из кнопки.
             Container.BindInterfacesTo<SpawnerTimerService>().AsSingle().NonLazy();
 
             Container.BindInterfacesTo<BoardPresenter>().AsSingle();

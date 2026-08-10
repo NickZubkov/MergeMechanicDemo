@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace MergeMechanic.Configs
 {
-    /// <summary>Настройки кнопки-таймера, выдающей спавнер.</summary>
     [CreateAssetMenu(menuName = "MergeMechanic/Spawner Timer", fileName = "SpawnerTimerConfig")]
     public class SpawnerTimerConfig : ScriptableObject
     {

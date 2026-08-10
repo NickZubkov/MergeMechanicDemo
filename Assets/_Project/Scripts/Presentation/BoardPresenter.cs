@@ -7,7 +7,6 @@ using Zenject;
 
 namespace MergeMechanic.Presentation
 {
-    /// <summary>Держит сцену в соответствии с моделью. Сам состояние не меняет.</summary>
     public class BoardPresenter : IInitializable, System.IDisposable, IBoardObjectViews
     {
         private readonly IGameBoard _board;

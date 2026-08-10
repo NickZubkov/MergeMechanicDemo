@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace MergeMechanic.Configs
 {
-    /// <summary>Один уровень цепочки. Уровень с непустой таблицей спавна и есть спавнер.</summary>
     [Serializable]
     public class ChainLevel
     {
