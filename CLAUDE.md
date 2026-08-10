@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Состояние проекта
 
-Unity-проект `MergeMechanicDemo` на **Unity 2022.3.62f3** (LTS), Built-in Render Pipeline. Это гринфилд: своего кода в `Assets/` нет (лежит только импортированный редактором `Assets/TextMesh Pro/` — TMP Essentials), `ProjectSettings/EditorBuildSettings.asset` не содержит ни одной сцены, в `Library/ScriptAssemblies` собраны лишь сборки пакетов (TextMeshPro, uGUI, TestRunner, MCPForUnity). Архитектуры кода ещё нет — она создаётся с нуля.
+Unity-проект `MergeMechanicDemo` на **Unity 2022.3.62f3** (LTS), Built-in Render Pipeline. Это гринфилд: своего кода в `Assets/` нет, `ProjectSettings/EditorBuildSettings.asset` не содержит ни одной сцены. В `Assets/` пока только сторонние ассеты — `TextMesh Pro/` (TMP Essentials) и `Plugins/Zenject/` (Extenject, DI-контейнер со своими asmdef: `Zenject`, `Zenject-Editor`, `Zenject-TestFramework` и тестовые). Архитектуры кода ещё нет — она создаётся с нуля.
 
 ## Окружение
 
@@ -43,14 +43,27 @@ Unity-проект `MergeMechanicDemo` на **Unity 2022.3.62f3** (LTS), Built-i
 
 Важно: `com.coplaydev.unity-mcp` тянет за собой **`com.unity.test-framework` 1.1.33** (и `com.unity.ext.nunit` 1.0.6, `com.unity.nuget.newtonsoft-json` 3.0.2) — они видны в `packages-lock.json` с `depth: 1..2`, но не в `manifest.json`. То есть NUnit, `[Test]` и `-runTests` работают из коробки, отдельно добавлять ничего не нужно. Обратная сторона: тестовый фреймворк держится только на транзитивной зависимости MCP-пакета — если он когда-нибудь будет удалён, тесты отвалятся, и `com.unity.test-framework` придётся вписать в `manifest.json` явно.
 
+Для IDE установлен `com.unity.ide.rider` 3.0.40 — см. раздел «Интеграция с Rider».
+
 Реально отсутствуют:
 
 | Нужно для | Пакет | Последствие отсутствия |
 |---|---|---|
-| Генерация `.csproj`/`.sln`, IntelliSense | `com.unity.ide.visualstudio` или `com.unity.ide.rider` | файлы проектов не генерируются |
 | Новый Input System | `com.unity.inputsystem` | доступен только legacy `Input.*` |
 
 `Assets/**/*.csproj` и `*.sln` в `.gitignore`, так что их отсутствие в репозитории — норма, а не признак поломки.
+
+## Интеграция с Rider
+
+- Пакет `com.unity.ide.rider` 3.0.40 установлен; активный редактор — `Packages.Rider.Editor.RiderScriptEditor`, External Script Editor указывает на `C:\Program Files\JetBrains\JetBrains Rider 2022.3.1\bin\rider64.exe` (на машине есть также Rider 2025.2.3 и Toolbox-сборка 2024.2 — переключается в Edit → Preferences → External Tools).
+- В корне генерируются `MergeMechanicDemo.sln` и по `.csproj` на сборку (`Assembly-CSharp` + Zenject'овские). Все они в `.gitignore` — это артефакты, а не часть репозитория.
+- Пересоздать файлы проектов без открытия IDE: Edit → Preferences → External Tools → Regenerate project files, либо через MCP `execute_code`:
+
+  ```csharp
+  Unity.CodeEditor.CodeEditor.CurrentEditor.SyncAll();
+  ```
+
+- По умолчанию `.csproj` создаются только для сборок из `Assets/`; чтобы в Rider были видны исходники пакетов (MCPForUnity, TMP), нужно отметить соответствующие галочки «Generate .csproj files for…» там же в External Tools.
 
 ## Настройки, влияющие на код
 

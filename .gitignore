@@ -43,6 +43,9 @@ ExportedObj/
 *.pidb.meta
 *.pdb.meta
 *.mdb.meta
+# .meta for assets that are themselves ignored (e.g. project files shipped inside plugins)
+*.csproj.meta
+*.sln.meta
 
 # Unity3D generated file on crash reports
 sysinfo.txt
