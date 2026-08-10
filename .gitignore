@@ -67,3 +67,6 @@ crashlytics-build.properties
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Internal docs — local working notes, not part of the repo
+/[Dd]ocs/
