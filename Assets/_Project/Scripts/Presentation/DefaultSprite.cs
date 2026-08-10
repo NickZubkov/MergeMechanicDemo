@@ -18,6 +18,7 @@ namespace MergeMechanic.Presentation
                         new Rect(0f, 0f, texture.width, texture.height),
                         new Vector2(0.5f, 0.5f),
                         texture.width);
+                    _square.hideFlags = HideFlags.HideAndDontSave;
                 }
 
                 return _square;

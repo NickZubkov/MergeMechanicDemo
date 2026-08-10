@@ -6,10 +6,8 @@ namespace MergeMechanic.Configs
     [CreateAssetMenu(menuName = "MergeMechanic/Merge Chain", fileName = "MergeChain")]
     public class MergeChainConfig : ScriptableObject
     {
-        [SerializeField] private string _id = string.Empty;
         [SerializeField] private List<ChainLevel> _levels = new List<ChainLevel>();
 
-        public string Id => _id;
         public int MaxLevel => _levels.Count;
 
         public bool HasLevel(int level) => level >= 1 && level <= _levels.Count;
@@ -20,6 +18,9 @@ namespace MergeMechanic.Configs
         {
             for (int i = 0; i < _levels.Count; i++)
             {
+                if (_levels[i] == null)
+                    continue;
+
                 SpawnTable table = _levels[i].SpawnTable;
                 if (table == null || table.IsEmpty)
                     continue;

@@ -14,12 +14,8 @@ namespace MergeMechanic.Presentation
         [SerializeField] private int _normalSortingOrder = 10;
         [SerializeField] private int _draggingSortingOrder = 20;
 
-        public int Id { get; private set; }
-
         public void Bind(BoardObject boardObject)
         {
-            Id = boardObject.Id;
-
             ChainLevel level = boardObject.LevelData;
             _renderer.sprite = level.Sprite != null ? level.Sprite : DefaultSprite.Square;
             _renderer.color = level.Color;

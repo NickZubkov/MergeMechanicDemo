@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace MergeMechanic.Presentation
 {
-    public class BoardView : MonoBehaviour, IBoardLayout
+    public class BoardView : MonoBehaviour, IBoardLayout, IBoardBuilder
     {
         [SerializeField] private Camera _camera;
         [SerializeField] private SpriteRenderer _cellPrefab;
@@ -28,7 +28,8 @@ namespace MergeMechanic.Presentation
             for (int y = 0; y < height; y++)
             {
                 SpriteRenderer cell = Instantiate(_cellPrefab, _cellsRoot);
-                cell.sprite = DefaultSprite.Square;
+                if (cell.sprite == null)
+                    cell.sprite = DefaultSprite.Square;
                 cell.transform.position = CellToWorld(new Vector2Int(x, y));
                 cell.transform.localScale = Vector3.one * (_cellSize * 0.95f);
                 cell.color = _cellColor;
@@ -48,8 +49,11 @@ namespace MergeMechanic.Presentation
         }
 
         public bool TryScreenToCell(Vector3 screenPosition, out Vector2Int cell)
+            => TryWorldToCell(ScreenToWorld(screenPosition), out cell);
+
+        public bool TryWorldToCell(Vector3 worldPosition, out Vector2Int cell)
         {
-            Vector3 local = ScreenToWorld(screenPosition) - _origin;
+            Vector3 local = worldPosition - _origin;
 
             cell = new Vector2Int(
                 Mathf.RoundToInt(local.x / _cellSize),

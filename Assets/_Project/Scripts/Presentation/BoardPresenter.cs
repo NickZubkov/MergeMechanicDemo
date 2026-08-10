@@ -10,6 +10,7 @@ namespace MergeMechanic.Presentation
     {
         private readonly IGameBoard _board;
         private readonly IBoardLayout _layout;
+        private readonly IBoardBuilder _builder;
         private readonly BoardObjectView.Factory _factory;
         private readonly SignalBus _signalBus;
         private readonly Dictionary<int, BoardObjectView> _views = new Dictionary<int, BoardObjectView>();
@@ -17,18 +18,20 @@ namespace MergeMechanic.Presentation
         public BoardPresenter(
             IGameBoard board,
             IBoardLayout layout,
+            IBoardBuilder builder,
             BoardObjectView.Factory factory,
             SignalBus signalBus)
         {
             _board = board;
             _layout = layout;
+            _builder = builder;
             _factory = factory;
             _signalBus = signalBus;
         }
 
         public void Initialize()
         {
-            _layout.Build(_board.Width, _board.Height);
+            _builder.Build(_board.Width, _board.Height);
 
             _signalBus.Subscribe<BoardObjectSpawnedSignal>(OnSpawned);
             _signalBus.Subscribe<BoardObjectMovedSignal>(OnMoved);

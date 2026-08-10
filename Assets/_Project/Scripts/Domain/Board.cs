@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,6 +8,8 @@ namespace MergeMechanic.Domain
     {
         private readonly BoardObject[,] _cells;
         private readonly List<Vector2Int> _freeCellsBuffer = new List<Vector2Int>();
+
+        private int _occupiedCount;
 
         public int Width { get; }
         public int Height { get; }
@@ -25,18 +28,7 @@ namespace MergeMechanic.Domain
             }
         }
 
-        public bool HasFreeCell
-        {
-            get
-            {
-                for (int x = 0; x < Width; x++)
-                for (int y = 0; y < Height; y++)
-                    if (_cells[x, y] == null)
-                        return true;
-
-                return false;
-            }
-        }
+        public bool HasFreeCell => _occupiedCount < Width * Height;
 
         public Board(int width, int height)
         {
@@ -54,16 +46,36 @@ namespace MergeMechanic.Domain
 
         public void Place(BoardObject boardObject, Vector2Int cell)
         {
+            if (boardObject == null)
+                throw new ArgumentNullException(nameof(boardObject));
+            if (!IsInside(cell))
+                throw new ArgumentOutOfRangeException(
+                    nameof(cell), $"Клетка {cell} вне поля {Width}x{Height}.");
+            if (_cells[cell.x, cell.y] != null)
+                throw new InvalidOperationException($"Клетка {cell} уже занята.");
+
             _cells[cell.x, cell.y] = boardObject;
+            _occupiedCount++;
             boardObject.SetPosition(cell);
         }
 
-        public void Remove(Vector2Int cell) => _cells[cell.x, cell.y] = null;
+        public void Remove(Vector2Int cell)
+        {
+            if (!IsInside(cell))
+                throw new ArgumentOutOfRangeException(
+                    nameof(cell), $"Клетка {cell} вне поля {Width}x{Height}.");
+
+            if (_cells[cell.x, cell.y] == null)
+                return;
+
+            _cells[cell.x, cell.y] = null;
+            _occupiedCount--;
+        }
 
         public void Move(Vector2Int from, Vector2Int to)
         {
             BoardObject moved = _cells[from.x, from.y];
-            _cells[from.x, from.y] = null;
+            Remove(from);
             Place(moved, to);
         }
 

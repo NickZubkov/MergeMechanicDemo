@@ -27,10 +27,14 @@ namespace MergeMechanic.Presentation
         {
             if (Input.GetMouseButtonDown(0))
                 TryBeginDrag();
-            else if (_dragged != null && Input.GetMouseButtonUp(0))
-                EndDrag();
-            else if (_dragged != null && Input.GetMouseButton(0))
+
+            if (_dragged == null)
+                return;
+
+            if (Input.GetMouseButton(0) && !Input.GetMouseButtonUp(0))
                 _dragged.transform.position = _layout.ScreenToWorld(Input.mousePosition) + _grabOffset;
+            else
+                EndDrag();
         }
 
         private void TryBeginDrag()
@@ -65,7 +69,7 @@ namespace MergeMechanic.Presentation
             InteractionResult result = InteractionResult.Rejected;
             Vector2Int settled = from;
 
-            if (_layout.TryScreenToCell(Input.mousePosition, out Vector2Int toCell))
+            if (!IsPointerOverUI() && _layout.TryWorldToCell(view.transform.position, out Vector2Int toCell))
             {
                 result = _board.TryInteract(from, toCell);
                 if (result == InteractionResult.Moved)

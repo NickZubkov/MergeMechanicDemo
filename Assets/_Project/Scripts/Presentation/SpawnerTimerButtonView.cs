@@ -15,6 +15,8 @@ namespace MergeMechanic.Presentation
         [SerializeField] private string _waitingText = "No space";
 
         private ISpawnerTimer _timer;
+        private TimerState _shownState = (TimerState)(-1);
+        private int _shownSeconds = -1;
 
         [Inject]
         public void Construct(ISpawnerTimer timer) => _timer = timer;
@@ -29,12 +31,19 @@ namespace MergeMechanic.Presentation
         {
             _button.interactable = _timer.CanStart;
 
-            switch (_timer.State)
+            TimerState state = _timer.State;
+            int seconds = state == TimerState.Counting ? Mathf.CeilToInt(_timer.Remaining) : -1;
+
+            if (state == _shownState && seconds == _shownSeconds)
+                return;
+
+            _shownState = state;
+            _shownSeconds = seconds;
+
+            switch (state)
             {
                 case TimerState.Counting:
-                    _label.text = TimeSpan
-                        .FromSeconds(Mathf.CeilToInt(_timer.Remaining))
-                        .ToString(@"mm\:ss");
+                    _label.text = TimeSpan.FromSeconds(seconds).ToString(@"mm\:ss");
                     break;
 
                 case TimerState.WaitingForSpace:

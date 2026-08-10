@@ -19,6 +19,9 @@ namespace MergeMechanic.Editor
 
             BuildReport report = BuildPipeline.BuildPlayer(options);
             Debug.Log($"WebGL build finished: {report.summary.result}, size {report.summary.totalSize} bytes");
+
+            if (report.summary.result != BuildResult.Succeeded)
+                EditorApplication.Exit(1);
         }
     }
 }
