@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c67850c19a210874fa5d5c399afea6e0, type: 3}
+  m_Name: Items
+  m_EditorClassIdentifier: 
+  _id: items
+  _levels:
+  - _displayName: I-1
+    _color: {r: 0.49803922, g: 0.69803923, b: 1, a: 1}
+    _sprite: {fileID: 0}
+    _spawnTable:
+      _entries: []
+  - _displayName: I-2
+    _color: {r: 0.49803922, g: 0.8784314, b: 0.5411765, a: 1}
+    _sprite: {fileID: 0}
+    _spawnTable:
+      _entries: []
+  - _displayName: I-3
+    _color: {r: 1, g: 0.827451, b: 0.43137255, a: 1}
+    _sprite: {fileID: 0}
+    _spawnTable:
+      _entries: []
+  - _displayName: I-4
+    _color: {r: 1, g: 0.4862745, b: 0.4862745, a: 1}
+    _sprite: {fileID: 0}
+    _spawnTable:
+      _entries: []
