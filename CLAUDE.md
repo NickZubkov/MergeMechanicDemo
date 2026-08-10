@@ -6,6 +6,25 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Unity-проект `MergeMechanicDemo` на **Unity 2022.3.62f3** (LTS), Built-in Render Pipeline. Это гринфилд: своего кода в `Assets/` нет, `ProjectSettings/EditorBuildSettings.asset` не содержит ни одной сцены. В `Assets/` пока только сторонние ассеты — `TextMesh Pro/` (TMP Essentials) и `Plugins/Zenject/` (Extenject, DI-контейнер со своими asmdef: `Zenject`, `Zenject-Editor`, `Zenject-TestFramework` и тестовые). Архитектуры кода ещё нет — она создаётся с нуля.
 
+## Текущая работа
+
+Проект — тестовое задание Unity Developer для Team Planet: кор-механика мерджа из Gossip Harbor (поле 7×9, спавнеры, цепочки уровней, кнопка с таймером). Сдача — WebGL-билд плюс описание архитектуры; позже отдельным заданием придёт доп. фича и потребуется APK.
+
+Дизайн согласован, реализация ведётся по плану. Оба документа лежат **вне репозитория** — папка `docs/` в `.gitignore` (строка `/[Dd]ocs/`), так что через git их не видно:
+
+- ТЗ: `Docs/Тестовое Задание Unity Developer (Team Planet) 2026 Август.md`
+- Спека: `docs/superpowers/specs/2026-08-10-merge-mechanic-design.md`
+- План на 14 задач: `docs/superpowers/plans/2026-08-10-merge-mechanic.md`
+
+**Начиная работу над механикой, прочитать сначала спеку, затем план.** Прогресс отмечен чекбоксами `- [ ]` в плане; сверять с историей коммитов.
+
+Договорённости, которые нельзя пересматривать молча:
+
+- Стек: Zenject + UniTask 2.5.11. **UniRx не используем** — архивирован, а `SignalBus` уже покрывает события.
+- Слой представления — world-space 2D в плоскости XY на `SpriteRenderer`; из UI только кнопка спавнера. Ввод — drag & drop на legacy `Input.*`.
+- В биндингах Zenject **`BindInterfacesTo` по умолчанию**. `BindInterfacesAndSelfTo` не применять: потребность инжектить конкретный класс означает, что типу не хватает интерфейса. Исключения — `BindInstance` для ScriptableObject-данных без поведения и `BindFactory` для фабрик.
+- Делаем **строго по ТЗ**. Тесты, сохранение состояния, анимации и разрезка по asmdef сознательно вынесены за скоуп — они перечислены в разделах «Вне скоупа» спеки и плана.
+
 ## Окружение
 
 - Редактор: `C:\Program Files\Unity\Hub\Editor\2022.3.62f3\Editor\Unity.exe` (в Hub стоят и другие версии — использовать строго ту, что в `ProjectSettings/ProjectVersion.txt`).
