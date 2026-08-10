@@ -4,19 +4,59 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Состояние проекта
 
-Unity-проект `MergeMechanicDemo` на **Unity 2022.3.62f3** (LTS), Built-in Render Pipeline. Это гринфилд: своего кода в `Assets/` нет, `ProjectSettings/EditorBuildSettings.asset` не содержит ни одной сцены. В `Assets/` пока только сторонние ассеты — `TextMesh Pro/` (TMP Essentials) и `Plugins/Zenject/` (Extenject, DI-контейнер со своими asmdef: `Zenject`, `Zenject-Editor`, `Zenject-TestFramework` и тестовые). Архитектуры кода ещё нет — она создаётся с нуля.
+Unity-проект `MergeMechanicDemo` на **Unity 2022.3.62f3** (LTS), Built-in Render Pipeline. Кор-механика мерджа реализована и живёт в `Assets/_Project/`; единственная сцена `Assets/_Project/Scenes/Game.unity` стоит в `ProjectSettings/EditorBuildSettings.asset` под индексом 0. Сторонние ассеты — `TextMesh Pro/` (TMP Essentials) и `Plugins/Zenject/` (Extenject, DI-контейнер со своими asmdef: `Zenject`, `Zenject-Editor`, `Zenject-TestFramework` и тестовые).
+
+## Структура своего кода
+
+Корневой namespace `MergeMechanic`, asmdef нет — всё компилируется в `Assembly-CSharp`.
+
+```
+Assets/_Project/
+├─ Configs/       Items, Spawners, BoardConfig, SpawnerTimerConfig, GameConfig (.asset)
+├─ Prefabs/       Cell, BoardObjectView
+├─ Scenes/        Game.unity
+└─ Scripts/
+   ├─ Configs/       ScriptableObject-данные, проверки данных в OnValidate
+   ├─ Domain/        Board, BoardObject, MergeRule, InteractionResult,
+   │                 IRandomProvider, UnityRandomProvider, WeightedPicker
+   ├─ Services/      IGameBoard/GameBoardService, ISpawnerTimer/SpawnerTimerService, TimerState
+   ├─ Signals/       BoardObjectSpawned / BoardObjectMoved / BoardObjectsMerged
+   ├─ Presentation/  IBoardLayout/BoardView, BoardObjectView (+Factory),
+   │                 IBoardObjectViews/BoardPresenter, DragInputController,
+   │                 SpawnerTimerButtonView, DefaultSprite
+   ├─ Installers/    GameInstaller
+   └─ Editor/        BuildScript
+```
+
+Инварианты, на которых держится вся конструкция, — ломать их правкой «по месту» нельзя:
+
+- **Спавнер — не отдельная сущность, а уровень цепочки с непустой таблицей спавна.** Поэтому мердж, перемещение и потолок цепочки работают для предметов и спавнеров одним кодом.
+- **`IGameBoard.TryInteract(from, to)` — единственная точка входа для любого ввода.** Тап это `from == to`; отдельного распознавания тапа нет. Input-слой правил не знает.
+- **Состояние поля меняется только в `GameBoardService`.** Сцена — отражение модели: `BoardPresenter` подписан на три сигнала и создаёт, двигает и удаляет вьюхи.
+- `GameBoardService` строит доску в конструкторе и намеренно **не** `IInitializable` — иначе корректность зависела бы от порядка `Initialize`. Стартовая раскладка сигналов не публикует: презентер читает `Objects` при своей инициализации.
+- Перетаскиваемая вьюха всегда возвращается на позицию из модели — и при `Moved`, и при `Rejected`; при `Merged` её уже уничтожил презентер.
+- `BoardView.FitCamera` считает `orthographicSize` один раз в `Build`. Если окно станет ýже, чем было на старте, поле подрежется по краям — известное ограничение, осознанно не правилось (см. «Что осталось»).
 
 ## Текущая работа
 
 Проект — тестовое задание Unity Developer для Team Planet: кор-механика мерджа из Gossip Harbor (поле 7×9, спавнеры, цепочки уровней, кнопка с таймером). Сдача — WebGL-билд плюс описание архитектуры; позже отдельным заданием придёт доп. фича и потребуется APK.
 
-Дизайн согласован, реализация ведётся по плану. Оба документа лежат **вне репозитория** — папка `docs/` в `.gitignore` (строка `/[Dd]ocs/`), так что через git их не видно:
+Дизайн согласован, реализация по плану доведена до задачи 13 включительно. Оба документа лежат **вне репозитория** — папка `docs/` в `.gitignore` (строка `/[Dd]ocs/`), так что через git их не видно:
 
 - ТЗ: `Docs/Тестовое Задание Unity Developer (Team Planet) 2026 Август.md`
 - Спека: `docs/superpowers/specs/2026-08-10-merge-mechanic-design.md`
 - План на 14 задач: `docs/superpowers/plans/2026-08-10-merge-mechanic.md`
 
 **Начиная работу над механикой, прочитать сначала спеку, затем план.** Прогресс отмечен чекбоксами `- [ ]` в плане; сверять с историей коммитов.
+
+### Что сделано (2026-08-10)
+
+Задачи 1–13: UniTask в зависимостях, конфиги, домен, сервисы, сигналы, слой представления, инсталлер, ассеты, префабы, сцена и прогон в Play Mode. Механика проверена по чек-листу ТЗ прямо через контейнер: тап по спавнеру раздаёт предметы по весам (90/10 у S-1, 50/50 у S-2), мердж поднимает уровень, потолок цепочки и чужая цепочка дают отказ, таймер при полном поле уходит в `WaitingForSpace` и доставляет спавнер, как только клетка освободится. Расхождений модели и сцены нет.
+
+### Что осталось
+
+- **WebGL-билд** — задача 14, шаги 2, 4, 5: Switch Platform, `Compression Format = Disabled`, `Publishing Settings → Decompression Fallback`, затем сборка. Отложено 2026-08-10 по решению заказчика работы: переключение платформы и первая сборка занимают 10–20 минут и блокируют редактор. Editor-скрипт и `.gitignore` уже готовы.
+- **Пересчёт `orthographicSize` при изменении аспекта** — замечено при проверке, не делалось: правило «строго по ТЗ». Если понадобится, это несколько строк в `BoardView`.
 
 Договорённости, которые нельзя пересматривать молча:
 
@@ -54,11 +94,17 @@ Unity-проект `MergeMechanicDemo` на **Unity 2022.3.62f3** (LTS), Built-i
 
 `-testPlatform PlayMode` — для PlayMode-тестов. Код возврата: 0 — все тесты прошли, 2 — есть падения, 3 — запуск не удался; детали смотреть в XML из `-testResults`.
 
-Сборки собственной команды нет: чтобы билдить из CLI, придётся написать editor-скрипт с `BuildPipeline.BuildPlayer` и вызывать его через `-executeMethod`.
+WebGL-сборка — `MergeMechanic.Editor.BuildScript.BuildWebGL` (`Assets/_Project/Scripts/Editor/BuildScript.cs`). Из открытого редактора вызывается пунктом меню `MergeMechanic → Build WebGL`, из CLI при закрытом редакторе:
+
+```powershell
+& "C:\Program Files\Unity\Hub\Editor\2022.3.62f3\Editor\Unity.exe" -quit -batchmode -nographics -projectPath "D:\UnityProjects\MergeMechanicDemo" -executeMethod MergeMechanic.Editor.BuildScript.BuildWebGL -logFile -
+```
+
+Результат кладётся в `Builds/WebGL` — папка в `.gitignore` и в репозиторий не попадает. Первая сборка занимает 10–20 минут, ей предшествует переключение платформы с переимпортом ассетов.
 
 ## Набор пакетов урезан — что придётся доставить
 
-Помимо встроенных модулей (`com.unity.modules.*`) в `Packages/manifest.json` есть `com.unity.ugui` (`Canvas`, `Image`, `Button`), `com.unity.textmeshpro` 3.0.7 (`TMP_Text`), `com.unity.device-simulator.devices` и `com.coplaydev.unity-mcp` (git-зависимость, см. ниже).
+Помимо встроенных модулей (`com.unity.modules.*`) в `Packages/manifest.json` есть `com.unity.ugui` (`Canvas`, `Image`, `Button`), `com.unity.textmeshpro` 3.0.7 (`TMP_Text`), `com.cysharp.unitask` (git-зависимость, **запинена тегом 2.5.11** — незапиненную при переразрешении унесёт на произвольный коммит), `com.unity.device-simulator.devices` и `com.coplaydev.unity-mcp` (git-зависимость с незапиненной ветки, см. ниже).
 
 Важно: `com.coplaydev.unity-mcp` тянет за собой **`com.unity.test-framework` 1.1.33** (и `com.unity.ext.nunit` 1.0.6, `com.unity.nuget.newtonsoft-json` 3.0.2) — они видны в `packages-lock.json` с `depth: 1..2`, но не в `manifest.json`. То есть NUnit, `[Test]` и `-runTests` работают из коробки, отдельно добавлять ничего не нужно. Обратная сторона: тестовый фреймворк держится только на транзитивной зависимости MCP-пакета — если он когда-нибудь будет удалён, тесты отвалятся, и `com.unity.test-framework` придётся вписать в `manifest.json` явно.
 
@@ -96,7 +142,7 @@ Unity-проект `MergeMechanicDemo` на **Unity 2022.3.62f3** (LTS), Built-i
 - У каждого файла в `Assets/` есть парный `.meta` с GUID. Создавая, перемещая или удаляя ассеты в обход редактора, всегда обрабатывай `.meta` вместе с файлом — иначе рвутся ссылки в сценах и префабах. Скрипты, созданные текстовыми инструментами, получат `.meta` при следующем импорте редактором; сгенерированный `.meta` нужно коммитить.
 - `.gitattributes` задаёт `eol=lf` для всего текста; новые скрипты Unity тоже создаёт с LF.
 - `Library/`, `Temp/`, `Logs/`, `UserSettings/` игнорируются — не коммитить и не чинить их содержимое руками.
-- Незакоммиченные изменения в `Packages/manifest.json`, `packages-lock.json`, `ProjectSettings/ProjectSettings.asset` и новый `PackageManagerSettings.asset` — след первого открытия проекта в редакторе, а не чья-то незавершённая работа.
+- Редактор сам переписывает `Packages/packages-lock.json`, `ProjectSettings/ProjectSettings.asset` и `PackageManagerSettings.asset` при открытии проекта и переключении платформы — такие изменения в `git status` обычно след работы редактора, а не чья-то незавершённая правка. Смотреть диф перед тем, как откатывать или коммитить.
 
 ## Автоматизация редактора (MCP for Unity)
 
@@ -120,4 +166,6 @@ Unity-проект `MergeMechanicDemo` на **Unity 2022.3.62f3** (LTS), Built-i
 - `batch_execute` ограничен 25 командами за вызов (`data.settings.batch_execute_max_commands`).
 - Скрипты, созданные/изменённые **мимо** MCP (обычными Write/Edit), редактор не увидит сам — после правок вызывать `refresh_unity`, затем `read_console` для ошибок компиляции. Для правок через MCP есть `create_script` / `apply_text_edits` / `script_apply_edits` / `validate_script`.
 - Play Mode гоняется через `manage_editor` (`play`/`pause`/`stop`), тесты — через `run_tests` (test-framework в проекте уже есть, см. выше); в `mcpforunity://tests` сейчас видны только заглушки сборок `MergeMechanicDemo` для EditMode/PlayMode, потому что собственных тестов ещё не написано.
+- **Пока окно редактора не в фокусе, игровой цикл в Play Mode не крутится вообще** — `Time.frameCount` остаётся 1, `Time.time` — 0. Отложенный `Object.Destroy` не выполняется, UniTask не продвигается, и это выглядит как дефект: вьюхи съеденных объектов висят на сцене, таймер стоит на стартовом значении. Первым делом в проверочном скрипте выставлять `Application.runInBackground = true` и сверять состояние только после того, как `Time.frameCount` растёт.
+- Все поля конфигов, вьюх и инсталлера приватные (`[SerializeField]`), поэтому ассеты, префабы и сцена собирались через `execute_code` (группа `scripting_ext`) с `SerializedObject` / `FindProperty`. Типы своего кода в этом контексте достаются через `System.Type.GetType("MergeMechanic.…, Assembly-CSharp")`, TMP — через `…, Unity.TextMeshPro`. Тем же способом правятся данные в существующих ассетах.
 - Пока MCP-сессия жива, редактор открыт — значит CLI-команды из раздела «Команды» в этот момент запускать нельзя.
