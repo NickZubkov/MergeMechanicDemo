@@ -81,6 +81,14 @@ namespace MergeMechanic.Presentation
         }
 
         private static bool IsPointerOverUI()
-            => EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+        {
+            if (EventSystem.current == null)
+                return false;
+
+            if (Input.touchCount > 0)
+                return EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId);
+
+            return EventSystem.current.IsPointerOverGameObject();
+        }
     }
 }
