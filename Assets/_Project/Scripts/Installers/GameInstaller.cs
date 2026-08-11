@@ -21,6 +21,8 @@ namespace MergeMechanic.Installers
 
             Container.BindInstance(_config);
 
+            Container.BindInterfacesTo<FrameRatePolicy>().AsSingle();
+
             Container.BindInterfacesTo<BoardView>().FromInstance(_boardView).AsSingle();
             Container.BindInterfacesTo<UnityRandomProvider>().AsSingle();
             Container.BindInterfacesTo<GameBoardService>().AsSingle();
