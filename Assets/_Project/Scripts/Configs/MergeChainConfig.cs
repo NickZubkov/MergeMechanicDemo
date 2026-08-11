@@ -21,23 +21,28 @@ namespace MergeMechanic.Configs
                 if (_levels[i] == null)
                     continue;
 
-                SpawnTable table = _levels[i].SpawnTable;
-                if (table == null || table.IsEmpty)
-                    continue;
+                ValidateTable(_levels[i].SpawnTable, i + 1);
+                ValidateTable(_levels[i].ExtraSpawn?.Table, i + 1);
+            }
+        }
 
-                foreach (SpawnEntry entry in table.Entries)
+        private void ValidateTable(SpawnTable table, int level)
+        {
+            if (table == null || table.IsEmpty)
+                return;
+
+            foreach (SpawnEntry entry in table.Entries)
+            {
+                if (entry.Chain == null)
                 {
-                    if (entry.Chain == null)
-                    {
-                        Debug.LogError($"[{name}] уровень {i + 1}: в таблице спавна не задана цепочка.", this);
-                        continue;
-                    }
-
-                    if (!entry.Chain.HasLevel(entry.Level))
-                        Debug.LogError(
-                            $"[{name}] уровень {i + 1}: цепочка '{entry.Chain.name}' не имеет уровня {entry.Level}.",
-                            this);
+                    Debug.LogError($"[{name}] уровень {level}: в таблице спавна не задана цепочка.", this);
+                    continue;
                 }
+
+                if (!entry.Chain.HasLevel(entry.Level))
+                    Debug.LogError(
+                        $"[{name}] уровень {level}: цепочка '{entry.Chain.name}' не имеет уровня {entry.Level}.",
+                        this);
             }
         }
     }
