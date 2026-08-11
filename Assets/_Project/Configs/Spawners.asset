@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c67850c19a210874fa5d5c399afea6e0, type: 3}
   m_Name: Spawners
   m_EditorClassIdentifier: 
-  _id: spawners
   _levels:
   - _displayName: S-1
     _color: {r: 0.7529412, g: 0.54901963, b: 1, a: 1}
@@ -25,6 +24,13 @@ MonoBehaviour:
       - _chain: {fileID: 11400000, guid: 74a935bc4f6d5eb488978f74b040b032, type: 2}
         _level: 2
         _weight: 10
+    _extraSpawn:
+      _chance: 0.3
+      _table:
+        _entries:
+        - _chain: {fileID: 11400000, guid: 6d33f548a053960429d73c7372313f45, type: 2}
+          _level: 1
+          _weight: 1
   - _displayName: S-2
     _color: {r: 1, g: 0.54901963, b: 0.83137256, a: 1}
     _sprite: {fileID: 0}
@@ -36,3 +42,10 @@ MonoBehaviour:
       - _chain: {fileID: 11400000, guid: 74a935bc4f6d5eb488978f74b040b032, type: 2}
         _level: 2
         _weight: 50
+    _extraSpawn:
+      _chance: 0.3
+      _table:
+        _entries:
+        - _chain: {fileID: 11400000, guid: 6d33f548a053960429d73c7372313f45, type: 2}
+          _level: 1
+          _weight: 1
