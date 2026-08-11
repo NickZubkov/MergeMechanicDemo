@@ -83,20 +83,32 @@ namespace MergeMechanic.Services
             if (!spawner.CanSpawn)
                 return InteractionResult.Rejected;
 
-            if (!_board.TryGetRandomFreeCell(_random, out Vector2Int cell))
+            if (!TrySpawnFromTable(spawner.LevelData.SpawnTable, spawner.Id))
                 return InteractionResult.Rejected;
 
-            SpawnEntry entry = WeightedPicker.Pick(spawner.LevelData.SpawnTable.Entries, _random);
+            ExtraSpawn extra = spawner.LevelData.ExtraSpawn;
+            if (!extra.IsEmpty && _random.Value01() < extra.Chance)
+                TrySpawnFromTable(extra.Table, spawner.Id);
+
+            return InteractionResult.Spawned;
+        }
+
+        private bool TrySpawnFromTable(SpawnTable table, int spawnerId)
+        {
+            if (!_board.TryGetRandomFreeCell(_random, out Vector2Int cell))
+                return false;
+
+            SpawnEntry entry = WeightedPicker.Pick(table.Entries, _random);
 
             if (entry == null || entry.Chain == null || !entry.Chain.HasLevel(entry.Level))
             {
                 Debug.LogError(
-                    $"Таблица спавна объекта {spawner.Id} содержит некорректную запись.");
-                return InteractionResult.Rejected;
+                    $"Таблица спавна объекта {spawnerId} содержит некорректную запись.");
+                return false;
             }
 
             Create(entry.Chain, entry.Level, cell);
-            return InteractionResult.Spawned;
+            return true;
         }
 
         private BoardObject Create(MergeChainConfig chain, int level, Vector2Int cell)
