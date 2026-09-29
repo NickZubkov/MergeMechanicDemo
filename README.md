@@ -5,6 +5,8 @@
 
 **Unity 2022.3.62f3 LTS** · Built-in Render Pipeline · Zenject · UniTask
 
+**Играть в браузере:** [nickzubkov.itch.io/mergemechanicdemo](https://nickzubkov.itch.io/mergemechanicdemo)
+
 | | |
 |---|---|
 | Сцена | `Assets/_Project/Scenes/Game.unity` (единственная, индекс 0 в Build Settings) |
